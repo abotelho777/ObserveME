@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ObserveME</title>
+  
+  
+  
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+
+  
+</head>
+
+
+<body>
+    <form action="/session" method="get">
+        <h2>ObserveME</h2>
+        <p>
+            <label for="class_code" class="floatLabel">Class Code</label>
+            <input id="class_code" name="class_code" type="text">
+            <span> Please enter a class code to join </span>
+        </p>
+        <p>
+            <input type="submit" value="Start Session" id="submit" onclick="return canStart()">
+        </p>
+
+        {% if message %}
+        <h3>{{ message }}</h3>
+        {% endif %}
+
+    </form>
+
+
+    <form action="/addclass" method="get">
+
+
+        <p>
+            <input type="submit" value="Register Class" id="submit">
+        </p>
+
+    </form>
+
+
+
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    <script  src="{{ url_for('static', filename='js/addclass.js')}}"></script>
+
+</body>
+</html>

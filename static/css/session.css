@@ -1,0 +1,245 @@
+
+form {
+  background: #fff;
+  padding: 4em 4em 2em;
+  max-width: 400px;
+  margin: 50px auto 0;
+  box-shadow: 0 0 1em #222;
+  border-radius: 2px;
+}
+form h2 {
+  margin: 0 0 20px 0;
+  padding: 10px;
+  text-align: center;
+  font-size: 30px;
+  color: #666666;
+  border-bottom: solid 1px #e5e5e5;
+}
+
+form h3 {
+  margin: 0 0 10px 0;
+  padding: 10px;
+  text-align: center;
+  font-size: 18px;
+  color: #666666;
+  border-top: solid 1px #e5e5e5;
+  border-bottom: solid 1px #e5e5e5;
+}
+
+form p {
+  margin: 0 0 1em 0;
+  position: relative;
+}
+form input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  outline: none;
+  margin: 0em 0em 0em -8em;
+}
+form input[type="text"]{
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  outline: none;
+  margin: 0em 0em;
+}
+form input[type="text"]:focus,
+form input[type="password"]:focus {
+  background: #fff;
+}
+form span {
+  display: block;
+  background: #F9A5A5;
+  padding: 2px 5px;
+  color: #666;
+}
+form input[type="submit"] {
+  background: rgba(148, 186, 101, 0.7);
+  box-shadow: 0 3px 0 0 rgba(123, 163, 73, 0.7);
+  border-radius: 2px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: block;
+  font-size: 2em;
+  line-height: 1.6em;
+  margin: 2em 0 0;
+  outline: none;
+  padding: .8em 0;
+  text-shadow: 0 1px #68B25B;
+}
+
+form input[class="pre_code"] {
+  background: rgba(60, 107, 186, 0.7);
+  box-shadow: 0 3px 0 0 rgba(58, 64, 163, 0.7);
+  border-radius: 2px;
+  border: none;
+  color: #fff;
+  width: 45%;
+  cursor: pointer;
+  display: inline;
+  font-size: 2em;
+  line-height: 1.6em;
+  margin: .2em .05em 0;
+  outline: none;
+  padding: .8em 0;
+  text-shadow: 0 1px #68B25B;
+}
+
+form input[id="skip_student"] {
+  background: rgba(186, 56, 65, 0.7);
+  box-shadow: 0 3px 0 0 rgba(186, 16, 32, 0.7);
+  border-radius: 2px;
+  border: none;
+  color: #fff;
+  width: 92%;
+  cursor: pointer;
+  display: block;
+  font-size: 2em;
+  line-height: 1.6em;
+  margin: .2em .05em 0;
+  outline: none;
+  padding: .8em 0;
+  text-shadow: 0 1px #68B25B;
+}
+
+form input[type="submit"]:hover {
+  background: #94af65;
+  text-shadow: 0 1px 3px rgba(70, 93, 41, 0.7);
+}
+
+
+
+form input[class="pre_code"]:hover {
+  background: rgba(58, 64, 163, 0.7);
+  text-shadow: 0 1px 3px rgba(60, 107, 186, 0.7);
+}
+
+form input[id="skip_student"]:hover {
+  background: rgba(186, 16, 32, 0.7);
+  text-shadow: 0 1px 3px rgba(186, 56, 65, 0.7);
+}
+
+
+form label.floatLabel {
+  top: -11px;
+  background-color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  text-align: left;
+  margin: 0em 0em;
+}
+*{font-family: 'Roboto', sans-serif;}
+
+@keyframes click-wave {
+  0% {
+    height: 40px;
+    width: 40px;
+    top: -1em;
+    opacity: 0.35;
+    position: relative;
+  }
+  100% {
+    height: 80px;
+    width: 80px;
+    top: -2.2em;
+    margin-left: -25px;
+    opacity: 0.1;
+  }
+}
+
+.option-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  position: relative;
+  top: 8px;
+  right: 0;
+  bottom: 0;
+  left: 10px;
+  height: 30px;
+  width: 30px;
+  transition: all 0.15s ease-out 0s;
+  background: #cbd1d8;
+  border: none;
+  color: #17DE07 !important;
+  alignment: left;
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 2rem;
+
+  outline: none;
+  z-index: 1000;
+}
+.option-input:hover {
+  background: #9faab7;
+}
+.option-input:checked {
+  background: #FFEB8C;
+}
+.option-input:checked::before {
+  height: 30px;
+  width: 30px;
+  top: -0.15em;
+  position: absolute;
+  content: '✓';
+  display: inline-block;
+  font-size: 26.66667px;
+  font-family: sans-serif;
+  font-weight: 900;
+  text-align: center;
+  line-height: 40px;
+  -webkit-appearance: none !important;
+  color: #17DE07 !important;
+}
+.option-input:checked::after {
+  -webkit-animation: click-wave 0.2s;
+  -moz-animation: click-wave 0.2s;
+  animation: click-wave 0.2s;
+  background: #FFEB8C;
+  content: '';
+  display: block;
+  position: relative;
+  z-index: 100;
+
+}
+.option-input.radio {
+  border-radius: 50%;
+}
+.option-input.radio::after {
+  border-radius: 50%;
+}
+
+body {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: block;
+  background: #e8ebee;
+  color: #9faab7;
+  font-family: "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  text-align: left;
+}
+form div {
+  padding: 0.2em 5em 1em;
+}
+form label {
+  display: block;
+  line-height: 30px;
+  text-align: left;
+  margin: 0em -8em 0em -2em;
+}
+
+#coding_form {
+  padding: 0em 0em 0em 0em;
+  /*display: none;*/
+  /*visibility: hidden;*/
+}
+
+#skip_student {
+
+}
+
+

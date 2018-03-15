@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ObserveME</title>
+  
+  
+  
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+
+  
+</head>
+
+<body>
+  	
+
+    <form action="/addclass" method="post">
+      <h2>Add Class</h2>
+
+        <p>
+            <label for="teacher" class="floatLabel">Teacher Name</label>
+            <input id="teacher" name="teacher" type="text">
+            <span> Required Field </span>
+        </p>
+        <p>
+            <label for="classname" class="floatLabel">Class Name</label>
+            <input id="classname" name="classname" type="text">
+            <span> Required Field </span>
+        </p>
+        <p>
+            <label for="grade" class="floatLabel">Grade Level</label>
+            <input id="grade" name="grade" type="text">
+        </p>
+        <p>
+            <label for="subject" class="floatLabel">Subject</label>
+            <input id="subject" name="subject" type="text">
+        </p>
+        <p>
+            <label for="nstudents" class="floatLabel">Number of Students</label>
+            <input id="nstudents" name="nstudents" type="text">
+            <span> Required Field - must be an integer value </span>
+        </p>
+
+        <input type="hidden" name="cl_code" value={{ code }}>
+
+        <h3>Class Code: {{ code }}</h3>
+
+		<p>
+			<input type="submit" value="Create Class" id="submit" onclick="return canSubmit()">
+		</p>
+	</form>
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+    <script  src="{{ url_for('static', filename='js/addclass.js')}}"></script>
+
+</body>
+</html>
