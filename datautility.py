@@ -351,12 +351,16 @@ def db_connect(db_name, user, password='', host='127.0.0.1', port='5432'):
         return None
 
 
-def db_query(db_object, query, arguments=None):
+def db_query(db_object, query, arguments=None, return_column_names=False):
     assert type(arguments) is dict or arguments is None
+
+    if arguments is not None:
+        for k in arguments:
+            query = query.replace(str(k),arguments[k])
 
     cur = db_object.cursor()
     try:
-        cur.execute(query, arguments)
+        cur.execute(query)
     except Exception:
         import traceback
         print('\033[91m')
@@ -364,7 +368,10 @@ def db_query(db_object, query, arguments=None):
         print(query + '\033[0m')
 
     try:
-        return cur.fetchall()
+        if return_column_names:
+            return cur.fetchall(), [desc[0] for desc in cur.description]
+        else:
+            return cur.fetchall()
     except Exception:
         try:
             db_object.commit()

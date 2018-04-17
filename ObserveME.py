@@ -1,11 +1,14 @@
 from flask import Flask, request, session, g, redirect, \
      render_template
 import datautility as du
+import evaluationutility as eval
 from numpy import random as rand
 import os
 import time
 import json
 import numpy as np
+import pandas as pd
+from sklearn.metrics import f1_score,cohen_kappa_score
 
 app = Flask(__name__)
 app_args = du.read_paired_data_file(os.path.dirname(os.path.abspath(__file__))+'\config.txt')
@@ -168,7 +171,7 @@ def add_class_landing():
         res = du.db_query(db, query)
 
     # generate the class code: simply 'CL' followed by the hex of row id from the classrooms table
-    code = 'CL' + hex(res[0][0])[2:]
+    code = str('CL' + hex(res[0][0])[2:]).upper()
 
     # render class creation page
     return render_template('addclass.html', code=code)
@@ -220,7 +223,7 @@ def session_landing():
 
     # get class information (code, number of students, etc)
     session['class_code'] = str(request.args.get('class_code')).upper()
-    query = 'SELECT * FROM classrooms WHERE code = \'{}\';'.format(session['class_code'])
+    query = 'SELECT * FROM classrooms WHERE upper(code) = upper(\'{}\');'.format(str(session['class_code']).upper())
     res = du.db_query(db, query)
 
     if len(res) == 0:
@@ -255,6 +258,7 @@ def session_landing():
 
             if len(res) == 0:
                 # if no sync is found, create a sync request - user transitions to session (waiting) state
+				
                 query = 'INSERT INTO syncing (class_id, coder_user_id, student_id) VALUES ({},{},{});'.format(
                     session['class_id'],session['user'],session['current'])
                 du.db_query(db, query)
@@ -401,6 +405,124 @@ def session_landing():
     args['class_id'] = session['class_code']
     args['student_id'] = session['current']
 
+    ########################################################################################################
+    # Querying to find the Kappa value
+    try:
+        ########################################################################################################
+        # Querying to find the Kappa value
+
+        query = 'select date_trunc(\'minute\',coding_timestamp) as coding_timestamp_trunc,* from coding_logs where date(coding_timestamp)= date(now()) and log_state=5 and submission_timestamp is not null ;'
+        df = pd.DataFrame(du.db_query(db, query))
+        if (len(df.index) != 0):
+
+            df.columns = ['coding_timestamp_trunc', 'id', 'class_id', 'coder_user_id', 'student_id', 'student_name',
+                          'coding_timestamp', 'submission_timestamp', 'shows_mental_effort', 'is_on_task',
+                          'affect_state',
+                          'focus', 'is_writing', 'rec_aid', 'hand_raised', 'collab_peer', 'is_fidgeting',
+                          'teacher_speaking', 'log_state']
+
+            # session['user']
+
+            num = (df['coder_user_id'].tolist())
+            users = list(set(df['coder_user_id'].tolist()))
+            coders_df = []
+            user_df = None
+            for i in users:
+                if i == session['user']:
+                    user_df = df.loc[df['coder_user_id'] == i]
+                    user_df = user_df.sort_values(by=['coding_timestamp'], ascending=False)
+                else:
+                    df1 = df.loc[df['coder_user_id'] == i]
+                    df1 = df1.sort_values(by=['coding_timestamp'], ascending=False)
+                    coders_df.append(df1)
+
+            for u in coders_df:
+                coder1 = user_df
+                coder2 = u
+                # print(users)
+                # print(session['user'])
+                # One hot encoding of the dataframe for each of the coders
+                # coder1 = pd.get_dummies(data=coder1, columns=['affect_state', 'focus'])
+                coder1_new = coder1.add_prefix('coder1_')
+                # coder2 = pd.get_dummies(data=coder2, columns=['affect_state', 'focus'])
+                coder2_new = coder2.add_prefix('coder2_')
+                # Getting the features on which kappa has to be calculated
+                coder1_features = coder1.columns
+                coder1_features = coder1_features.tolist()
+                coder2_features = coder2.columns
+                coder2_features = coder2_features.tolist()
+
+                coder1_features = coder1_features[8:]
+                coder2_features = coder2_features[8:]
+
+                # Finding common features and removing focus and affect state features, They will be handled seperately
+                common_features = list(set(coder1_features).intersection(set(coder2_features)))
+                # print(set(coder1_features))
+                # affect = ["affect_state_unknown", "affect_state_bored", "affect_state_frustrated", "affect_state_concentrating",
+                #           "affect_state_confused"]
+                # focus = ["focus_screen", "focus_unknown", "focus_teacher", "focus_peer", "focus_work"]
+                # aff = []
+                # foc = []
+                # for i in common_features:
+                #     if i in affect:
+                #         aff.append(i)
+                #         common_features.remove(i)
+                #     if i in focus:
+                #         foc.append(i)
+                #         common_features.remove(i)
+
+                # Renaming the common columns so that we can use them in merge function
+                coder1_new['coding_timestamp_trunc'] = coder1_new['coder1_coding_timestamp_trunc']
+                del coder1_new['coder1_coding_timestamp_trunc']
+                coder2_new['coding_timestamp_trunc'] = coder2_new['coder2_coding_timestamp_trunc']
+                del coder2_new['coder2_coding_timestamp_trunc']
+                coder1_new['student_id'] = coder1_new['coder1_student_id']
+                del coder1_new['coder1_student_id']
+                coder2_new['student_id'] = coder2_new['coder2_student_id']
+                del coder2_new['coder2_student_id']
+                merged = coder1_new.merge(coder2_new, on=['coding_timestamp_trunc', 'student_id'], how='inner')
+
+                query = 'SELECT first_name FROM user_details WHERE user_id = {};'.format(
+                    list(set(coder2['coder_user_id'].tolist()))[0])
+                name = np.array(du.db_query(db, query)).ravel()[0]
+                # Adding kappa values to args
+                for i in common_features:
+                    a = "coder1_" + i
+                    b = "coder2_" + i
+
+                    # print(len(merged[a]))
+
+                    npa = np.array(merged[a])
+                    npb = np.array(merged[b])
+                    try:
+                        # print(i)
+                        # print(merged[a])
+                        # print(merged[b])
+                        f = np.argwhere([j != -1 and j != 'unknown' for j in npa]).ravel()
+                        # print(f)
+                        npa = npa[f]
+                        npb = npb[f]
+
+                        f = np.argwhere([j != -1 and j != 'unknown' for j in npb]).ravel()
+                        # print(f)
+                        npa = npa[f]
+                        npb = npb[f]
+                    except ValueError:
+                        # print('skipped')
+                        continue
+
+                    # print(npa)
+
+                    # print(npb)
+                    # print('----------------')
+                    try:
+                        args[i] = '{} | {}: {:<.3f}'.format(args[i], name, cohen_kappa_score(npa, npb))
+                    except KeyError:
+                        args[i] = '{}: {:<.3f}'.format(name, cohen_kappa_score(npa, npb))
+
+    except:
+        pass
+
     # render session in 'landing' state
     return render_template('session.html', args=args)
 
@@ -423,7 +545,7 @@ def log_session():
     args['class_id'] = session['class_id']
     args['coder_user_id'] = session['user']
 
-    # find most recent empty log from user (will correspond with the row generated in the previous state)
+	# find most recent empty log from user (will correspond with the row generated in the previous state)
     query = 'SELECT * FROM coding_logs WHERE log_state < 0 ORDER BY coding_timestamp DESC;'
     res = du.db_query(db,query)
 
@@ -453,10 +575,12 @@ def log_session():
 
         query = 'UPDATE coding_logs SET {} WHERE id = {};'.format(set_list, res[0][0])
         du.db_query(db,query)
+    
 
+            
     # redirect to the session landing
     return redirect('/session?class_code={}'.format(session['class_code']))
 
 
 if __name__ == '__main__':
-    app.run(threaded=True, debug=False, host='0.0.0.0')
+    app.run(threaded=True, debug=False, host='0.0.0.0',port='5000')

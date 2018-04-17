@@ -10,6 +10,7 @@
   
   
       <link rel="stylesheet" href="{{ url_for('static', filename='css/session.css')}}">
+      
 
 {#    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />#}
 {#    <meta http-equiv="Pragma" content="no-cache" />#}
@@ -18,8 +19,17 @@
 {#    <script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>#}
     <script  src="{{ url_for('static', filename='js/session.js')}}"></script>
 </head>
-
-
+<script>
+  function myFunction() {
+            var x = document.getElementById("myDIV");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+</script>
+</head>
 <body>
         <div id="pre_coding_form">
             <form action="/session" method="get">
@@ -29,9 +39,44 @@
 
 
                 <p>
-                    <label for="student_name" class="floatLabel">Student Name</label>
+                    <label for="student_name" class="floatLabel">Student Name </label>
                     <input id="student_name" name="student_name" value={{ args.student_id }} type="text">
                 </p>
+				
+				<button type="button" onclick="myFunction()">Kappa Value</button>
+                
+                <div id="myDIV">
+                <p> </p>
+                    
+                    <label for="student_name" class="floatLabel" style="float: left; margin-left: -50px;">
+                        Kappa value : Inter-reliability</label>
+                    <label for="kappa" class="floatLabel" style="float: left; margin-left: -50px;">
+                        Shows mental effort:<br />&emsp;{{ args.shows_mental_effort}} </label>
+                    <label for="kappa" class="floatLabel" style="float: left; margin-left: -50px;">
+                        Affect State:<br />&emsp;{{ args.affect_state}} </label>
+                    <label for="kappa" class="floatLabel" style="float: left; margin-left: -50px;">
+                        Focus:<br />&emsp;{{ args.focus}} </label>
+                    <label for="kappa" class="floatLabel" style="float: left; margin-left: -50px;">
+                        On task:<br />&emsp;{{ args.is_on_task}}</label>
+                    <label for="kappa" class="floatLabel" style="float: left; margin-left: -50px;">
+                        Writing:<br />&emsp;{{ args.is_writing}}</label>
+                    <label for="kappa" class="floatLabel" style="float: left; margin-left: -50px;">
+                        Req aid:<br />&emsp;{{ args.rec_aid}}</label>
+                    <label for="kappa" class="floatLabel" style="float: left; margin-left: -50px;">
+                        Hand raised:<br />&emsp;{{ args.hand_raised}}</label>
+                    <label for="kappa" class="floatLabel" style="float: left; margin-left: -50px;">
+                        Collab peer:<br />&emsp;{{ args.collab_peer}}</label>
+                    <label for="kappa" class="floatLabel" style="float: left; margin-left: -50px;">
+                        Fidgeting:<br />&emsp;{{ args.is_fidgeting}}</label>
+                    <label for="kappa" class="floatLabel" style="float: left; margin-left: -50px;">
+                        Teacher speaking:<br />&emsp;{{ args.teacher_speaking}}</label>
+                    
+                    
+                    
+                </p>
+                </div>
+				
+				
                 <p>
                     <input type="submit" value="Start" class="pre_code" id="begin_coding"
                            onclick="document.getElementById('action').setAttribute('value','1');">
@@ -66,7 +111,7 @@
                 </p>
                 <p>
 
-                    <h3 id="countdown_timer">Timer: 15</h3>
+                    <h3 id="countdown_timer">Timer: 20</h3>
                     <input type="submit" value="Skip" class="pre_code" id="skip_student"
                            onclick="document.getElementById('action').setAttribute('value','3');">
 
@@ -283,7 +328,11 @@
 
 
     <script type="text/javascript">
+    
+      
+		
         if ( ({{ args.action }}) === 1) {
+            
             document.getElementById("pre_coding_form").style.display = "none";
             document.getElementById("coding_form").style.display = "none";
             document.getElementById("sync_form").style.display = "none";
@@ -292,7 +341,7 @@
 
 
 
-            var seconds_left1 = 15;
+            var seconds_left1 = 20;
             var interval1 = setInterval(function() {
                 document.getElementById('countdown_timer').innerHTML = "Timer: " + --seconds_left1;
 
@@ -348,7 +397,7 @@
                     document.getElementById("find_student").style.display = "none";
                     document.getElementById("timer_form").style.display = "block";
 
-                    var seconds_left6 = 15;
+                    var seconds_left6 = 20;
                     var interval6 = setInterval(function() {
                         document.getElementById('countdown_timer').innerHTML = "Timer: " + --seconds_left6;
 
@@ -372,9 +421,25 @@
             document.getElementById("sync_form").style.display = "none";
             document.getElementById("find_student").style.display = "none";
             document.getElementById("pre_coding_form").style.display = "block";
+            document.getElementById("myDIV").style.display = "none";
         }
 
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
 
+        /*for (i = 0; i < coll.length; i++) {
+            
+            coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+            content.style.display = "block";
+            }
+        });
+        }*/
+        
     </script>
 
 </body>
