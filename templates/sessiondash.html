@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>ObserveME</title>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{
+        url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+    <script type=text/javascript>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+</head>
+
+<body>
+    <form action="/session/observe" method="get">
+        <div>
+             <h2>ObserveME</h2>
+             <h3>Session Code: {{ args.session_code }}</h3>
+             <h3>Class Code: {{ args.class_code }}</h3>
+             <h3>Coding: {{ args.coding_template_name }}</h3>
+
+             <p id="kappaBtn_s" >
+                <input type="button" value="Show Kappa" id="showkappa" onclick="showKappa();getKappa();">
+            </p>
+
+            <p id="kappaBtn_h" hidden="True">
+                <input type="button" value="Hide Kappa" id="hidekappa" onclick="hideKappa()">
+            </p>
+
+         </div>
+
+         <div id="kappaDiv" hidden="True">
+             <h3> Coder:
+                <select id="coderNames" name="coder_names" onchange="return getKappa()">
+                </select>
+            </h3>
+         </div>
+
+        <p>
+            <input type="submit" value="Start Observations" id="start_obs"
+            onclick="while (document.getElementById('kappaDiv').firstChild)
+            {document.getElementById('kappaDiv').removeChild(document.getElementById('kappaDiv').firstChild);}">
+        </p>
+    </form>
+
+    <form action="/dashboard" method="get">
+        <p>
+            <input type="submit" value="Return" id="back">
+        </p>
+    </form>
+
+    <script  src="{{ url_for('static', filename='js/sessiondashboard.js')}}"></script>
+    <script>
+        function getKappa() {
+            $(function() {
+                var kpadiv = document.getElementById('kappaDiv');
+                var sel = document.getElementById("coderNames");
+                var ind = sel.getAttribute('selectedIndex');
+
+                $.getJSON($SCRIPT_ROOT + '/_get_kappa', 'coder='+sel.options[ind].value.toString(),
+                    function(data){
+                    for (var i = 0, len = data.length; i < len; i++) {
+                        kpadiv.removeChild(kpadiv.lastChild);
+                    }
+                    for (var i = 0, len = data.length; i < len; i++) {
+                        var el = document.createElement('h3');
+                        el.innerHTML = data[i].section.toString() + ': ' + data[i].kappa.toString();
+                        kpadiv.appendChild(el);
+                    }
+                });
+            });
+        }
+
+        $(function() {
+            var sel = document.getElementById("coderNames");
+            var element = 'Coder';
+            $.getJSON($SCRIPT_ROOT + '/_get_coders', function(data){
+                element = data[0];
+                for (var i = 0, len = data.length; i < len; i++) {
+                    //var opt = document.createElement('option');
+                    //if (i === 0) opt.setAttribute('selected', 'true');
+                    //opt.setAttribute('text', data[i][0]);
+                    //opt.setAttribute('value', data[i][1]);
+                    //opt.innerHTML = data[i][0];
+                    sel.options[sel.options.length] = new Option(data[i][0],data[i][1]);
+                    //sel.appendChild(opt);
+                }
+            });
+            //sel.innerHTML = element;
+
+            sel.setAttribute('selectedIndex',0);
+
+        });
+
+    </script>
+
+</body>
+</html>

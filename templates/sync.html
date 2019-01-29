@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>ObserveME</title>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{
+        url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+    <script type=text/javascript>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+</head>
+
+<body id="body">
+
+    <form action="/session/timer" method="post" id="sync_form">
+        <h2>ObserveME</h2>
+        <h3 id="sess">Session Code: </h3>
+        <h3 id="stu">Student</h3>
+        <h3></h3>
+        <div>
+            <h3>Waiting</h3>
+            <div id="waiting">
+
+            </div>
+            <h3>Ready</h3>
+            <div id="ready">
+
+            </div>
+        </div>
+
+        <h3></h3>
+
+        <p id="ready_btn_1" >
+                <input type="button" value="Ready" id="showrdy"
+                       onclick="document.getElementById('is_ready').setAttribute('value','1');
+                                document.getElementById('ready_btn_1').style.display='none';
+                                document.getElementById('ready_btn_0').style.display='block';">
+        </p>
+
+        <p id="ready_btn_0" style="display:none;">
+            <input type="button" value="Wait" id="hiderdy"
+                   onclick="document.getElementById('is_ready').setAttribute('value','0');
+                            document.getElementById('ready_btn_1').style.display='block';
+                            document.getElementById('ready_btn_0').style.display='none';">
+        </p>
+
+        <p id=proceed_btn style="display:none;" style="display:none">
+            <input type="submit" value="Proceed" id="proceed">
+        </p>
+
+        <input id="is_ready" value="0" style="display:none;">
+        <input id="student_name" name="student_name" type="text" style="display:none" value="">
+    </form>
+
+
+    <form action="/session/dashboard" method="get">
+        <p>
+            <input type="submit" value="Return" id="back">
+        </p>
+    </form>
+
+    <script>
+        //var is_ready = document.getElementById("is_ready").valueOf();
+        $.getJSON($SCRIPT_ROOT + '/_syncing', function(data){
+            console.log(data);
+            if (data.is_leader === 1) {
+                document.getElementById("proceed_btn").style.display = "block";
+            } else {
+                document.getElementById("proceed_btn").style.display = "none";
+            }
+            var sec = document.getElementById("waiting");
+            while (sec.firstChild) {
+                sec.removeChild(sec.firstChild);
+            }
+            for (var i = 0, len = data.waiting.length; i < len; i++) {
+                var name = document.createElement('p');
+                name.innerHTML = data.waiting[i];
+                sec.appendChild(name)
+            }
+
+            var sec = document.getElementById("ready");
+            while (sec.firstChild) {
+                sec.removeChild(sec.firstChild);
+            }
+            for (var i = 0, len = data.ready.length; i < len; i++) {
+                var name = document.createElement('p');
+                name.innerHTML = data.ready[i];
+                sec.appendChild(name)
+            }
+
+            document.getElementById("sess").innerHTML = "Session Code: " + data.session_code.toString();
+            document.getElementById("stu").innerHTML = "Student " + data.student_id.toString();
+            document.getElementById("student_name").setAttribute('value',data.student_id.toString());
+        });
+
+        var interval = setInterval(function() {
+            var is_ready = 'is_ready=' + document.getElementById("is_ready").getAttribute('value').toString();
+            $.getJSON($SCRIPT_ROOT + '/_syncing', is_ready.toString(), function(data){
+                console.log(data);
+                if (!(data.redirect === "none")) {
+                    var f = document.createElement("form");
+                    f.setAttribute('method',data.method.toString());
+                    f.setAttribute('action',data.redirect.toString());
+                    f.style.display = "none";
+                    document.getElementById("body").appendChild(f);
+                    f.submit()
+                }
+
+                if (data.is_leader === 1) {
+                    document.getElementById("proceed_btn").style.display = "block";
+                } else {
+                    document.getElementById("proceed_btn").style.display = "none";
+                }
+                var sec = document.getElementById("waiting");
+                while (sec.firstChild) {
+                    sec.removeChild(sec.firstChild);
+                }
+                for (var i = 0, len = data.waiting.length; i < len; i++) {
+                    var name = document.createElement('p');
+                    name.innerHTML = data.waiting[i];
+                    sec.appendChild(name)
+                }
+
+                var sec = document.getElementById("ready");
+                while (sec.firstChild) {
+                    sec.removeChild(sec.firstChild);
+                }
+                for (var i = 0, len = data.ready.length; i < len; i++) {
+                    var name = document.createElement('p');
+                    name.innerHTML = data.ready[i];
+                    sec.appendChild(name)
+                }
+
+                document.getElementById("sess").innerHTML = "Session Code: " + data.session_code.toString();
+                document.getElementById("stu").innerHTML = "Student " + data.student_id.toString();
+                document.getElementById("student_name").setAttribute('value',data.student_id.toString());
+            });
+        }, 1000);
+
+        /*
+        var interval1 = setInterval(function() {
+            document.getElementById('countdown_timer').innerHTML = "Timer: " + --seconds_left1;
+
+            if (seconds_left1 <= 0)
+            {
+                clearInterval(interval1);
+                document.getElementById('timer_form').submit();
+            }
+        }, 1000);*/
+    </script>
+
+</body>
+</html>

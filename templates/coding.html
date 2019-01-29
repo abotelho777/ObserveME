@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>ObserveME</title>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{
+        url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+    <script type=text/javascript>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+</head>
+
+<body>
+
+    <form action="/session/record" method="post" id="code_record">
+        <h2>ObserveME</h2>
+        <h3>Session Code: {{ args.session_code }} </h3>
+        <h3>Student {{ args.student_id }}</h3>
+
+        <p>
+            <label for="student_name" class="floatLabel">Student Name </label>
+            <input id="student_name" name="student_name" type="text" value={{ args.student_id }}>
+        </p>
+
+        <div id="codingTemplate">
+
+        </div>
+
+        <h3></h3>
+        <p>
+            <input type="submit" value="Record" id="record">
+        </p>
+    </form>
+
+
+    <form action="/session/dashboard" method="get">
+        <p>
+            <input type="submit" value="Return" id="back">
+        </p>
+    </form>
+
+
+    <script>
+        var temp = document.getElementById("codingTemplate");
+
+        $.getJSON($SCRIPT_ROOT + '/_coding_template_sections', function(data){
+                for (var i = 0, len = data.length; i < len; i++) {
+                    console.log(data[i]);
+                    var section = document.createElement('div');
+                    var hdr = document.createElement('h3');
+                    hdr.innerHTML = data[i].section_name;
+
+                    var cd_arr = data[i].coding;
+
+                    for (var j = 0; j < cd_arr.length; j++) {
+                        var cont = document.createElement('p')
+
+                        var lb = document.createElement('label');
+
+                        var cd = document.createElement('input');
+                        cd.setAttribute('type', data[i].type_name);
+                        cd.setAttribute('class', data[i].css_class);
+                        cd.setAttribute('value',cd_arr[j].value);
+
+                        if (data[i].type_name === 'checkbox') {
+                            cd.setAttribute('name',cd_arr[j].name);
+                        } else {
+                            cd.setAttribute('name',data[i].section_name);
+                        }
+
+                        if (data[i].type_name === 'radio' && j === 0) {
+                            cd.setAttribute('checked','True');
+                        }
+
+                        lb.innerHTML = cd_arr[j].name;
+                        lb.setAttribute('for',i.toString());
+                        lb.setAttribute('style','left: 50px;')
+
+                        cont.appendChild(lb);
+                        cont.appendChild(cd);
+                        section.appendChild(cont);
+                    }
+
+                    temp.appendChild(hdr);
+                    temp.appendChild(section);
+
+
+                    //var opt = document.createElement('option');
+                    //opt.setAttribute('text', data[i][1]);
+                    //opt.setAttribute('value', data[i][0]);
+                    //opt.innerHTML = data[i][1];
+                    //sel.appendChild(opt);
+                }
+            });
+
+
+    </script>
+
+</body>
+</html>

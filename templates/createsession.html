@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>ObserveME</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{
+        url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+    <script type=text/javascript>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+</head>
+
+<body>
+  	
+    <form action="/session/create" method="post">
+        <h2>ObserveME</h2>
+        <p id="classField">
+            <label for="class_code" class="floatLabel">Class Code</label>
+            <input id="class_code" name="class_code" type="text">
+            <span> Please enter a class code to join </span>
+        </p>
+        <p id="classBtn">
+            <input type="button" value="Create Class" id="addclass" onclick="return showClassForm()">
+        </p>
+
+        <div id="classForm" hidden="True">
+            <h3>Add Class</h3>
+
+            <p>
+                <label for="teacher" class="floatLabel">Teacher Name</label>
+                <input id="teacher" name="teacher" type="text">
+                <span> Required Field </span>
+            </p>
+            <p>
+                <label for="classname" class="floatLabel">Class Name</label>
+                <input id="classname" name="classname" type="text">
+                <span> Required Field </span>
+            </p>
+            <p>
+                <label for="grade" class="floatLabel">Grade Level</label>
+                <input id="grade" name="grade" type="text">
+            </p>
+            <p>
+                <label for="subject" class="floatLabel">Subject</label>
+                <input id="subject" name="subject" type="text">
+            </p>
+            <p>
+                <label for="nstudents" class="floatLabel">Number of Students</label>
+                <input id="nstudents" name="nstudents" type="text">
+                <span> Required Field - must be an integer value </span>
+            </p>
+        </div>
+
+
+        <div id="sessionForm">
+            <h3> Coding Template:
+                <select id="codingTemplate" name="coding_template">
+                </select>
+            </h3>
+            <p>
+                <label for="timer_seconds" class="floatLabel">Timer Seconds</label>
+                <input id="timer_seconds" name="timer_seconds" value="20" type="text">
+                <span> Required Field - must be an integer value </span>
+            </p>
+
+            <h3>
+            Strict Timer
+            <input type="checkbox" class="option-input checkbox" name="strict_timer" checked/>
+            </h3>
+
+            <h3>
+            Randomize Observation Order
+            <input type="checkbox" class="option-input checkbox" name="randomize_order" checked/>
+            </h3>
+
+        </div>
+
+        <p>
+			<input type="submit" value="Start Session" id="submit">
+		</p>
+
+    </form>
+
+    <form action="/dashboard" method="get">
+        <p>
+            <input type="submit" value="Return" id="back">
+        </p>
+    </form>
+
+
+    <script  src="{{ url_for('static', filename='js/createsession.js')}}"></script>
+
+    <script>
+        $(function() {
+            var sel = document.getElementById("codingTemplate");
+            var element = 'Template';
+            $.getJSON($SCRIPT_ROOT + '/_coding_templates', function(data){
+                element = data[0];
+                for (var i = 0, len = data.length; i < len; i++) {
+                    var opt = document.createElement('option');
+                    opt.setAttribute('text', data[i][1]);
+                    opt.setAttribute('value', data[i][0]);
+                    opt.innerHTML = data[i][1];
+                    sel.appendChild(opt);
+                }
+            });
+            sel.innerHTML = element
+        });
+    </script>
+
+</body>
+</html>

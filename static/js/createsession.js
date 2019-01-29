@@ -2,8 +2,7 @@
 var $teacher = $("#teacher");
 var $classname = $("#classname");
 var $nstudents = $("#nstudents");
-
-var $classcode = $("#class_code");
+var $sesscode = $("#session_code");
 
 //Hide hints
 $("form span").hide();
@@ -43,16 +42,21 @@ function canSubmit() {
 }
 
 function canStart() {
-    isFilled($classcode);
+    isFilled($sesscode);
+    return (isFilled($sesscode));
+}
 
-    return (isFilled($classcode));
+function showClassForm() {
+    document.getElementById("classField").style.display = "none";
+    document.getElementById("classBtn").style.display = "none";
+    document.getElementById("classForm").style.display = "block";
+    document.getElementById("class_code").setAttribute('value','')
 }
 
 $teacher.focus().keyup(function() {isFilled($teacher);});
 $classname.focus().keyup(function() {isFilled($classname);});
 $nstudents.focus().keyup(function() {isFilled($nstudents);});
-
-$classcode.focus().keyup(function() {isFilled($classcode);});
+$sesscode.focus().keyup(function() {isFilled($sesscode);});
 
 
 

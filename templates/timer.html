@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>ObserveME</title>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{
+        url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+</head>
+
+<body>
+
+    <form action="/session/observe" method="post" id="timer_form">
+        <h2>ObserveME</h2>
+        <h3>Session Code: {{ args.session_code }} </h3>
+        <h3>Student {{ args.student_id }}</h3>
+
+        <p>
+            <label for="student_name" class="floatLabel">Student Name </label>
+            <input id="student_name" name="student_name" type="text" value={{ args.student_id }} >
+        </p>
+
+        <p>
+            <h3 id="countdown_timer">Timer: {{ args.timer_seconds }}</h3>
+
+        </p>
+
+        <p id=proceed_btn style="display:none;">
+            <input type="submit" value="Proceed" id="proceed">
+        </p>
+
+        <p>
+            <input type="submit" value="Skip Student" id="skip_student"
+                   onclick="document.getElementById('timer_form').setAttribute('method','get');">
+        </p>
+    </form>
+
+
+    <form action="/session/dashboard" method="get">
+        <p>
+            <input type="submit" value="Return" id="back">
+        </p>
+    </form>
+
+    <script>
+        if (!( {{ args.strict_timer }})) {
+            document.getElementById("proceed_btn").style.display = "block";
+        }
+        var seconds_left1 = {{ args.timer_seconds }} ;
+        var interval1 = setInterval(function() {
+            document.getElementById('countdown_timer').innerHTML = "Timer: " + --seconds_left1;
+
+            if (seconds_left1 <= 0)
+            {
+                clearInterval(interval1);
+                document.getElementById('timer_form').submit();
+            }
+        }, 1000);
+    </script>
+
+</body>
+</html>

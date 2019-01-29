@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html >
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ObserveME</title>
-  
-  
-  
       <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
-
-  
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
 </head>
 
 
 <body>
-  	
 
 <form action="/login" method="post">
     <h2>ObserveME</h2>
@@ -27,7 +24,7 @@
 			<input id="lg_password" name="lg_password" type="password">
 		</p>
 		<p>
-			<input type="submit" value="Log In" id="submit">
+			<input type="submit" value="Log In" id="login">
 		</p>
 
 
@@ -40,13 +37,11 @@
 <form action="/register" method="get">
     <h3>Register</h3>
 		<p>
-			<input type="submit" value="Create My Account" id="submit">
+			<input type="submit" value="Create My Account" id="register">
 		</p>
 	</form>
 
-
-  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
     <script  src="{{ url_for('static', filename='js/register.js')}}"></script>
 
 </body>

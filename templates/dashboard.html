@@ -2,48 +2,45 @@
 <html >
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>ObserveME</title>
-  
-  
-  
       <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
-
-  
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{
+        url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
 </head>
 
 
 <body>
-    <form action="/session" method="get">
+    <form action="/session/join" method="POST">
         <h2>ObserveME</h2>
         <p>
-            <label for="class_code" class="floatLabel">Class Code</label>
-            <input id="class_code" name="class_code" type="text">
-            <span> Please enter a class code to join </span>
+            <label for="session_code" class="floatLabel">Session Code</label>
+            <input id="session_code" name="session_code" type="text">
+            <span> Please enter a session code to join </span>
         </p>
         <p>
-            <input type="submit" value="Start Session" id="submit" onclick="return canStart()">
+            <input type="submit" value="Join Session" id="joinsession" onclick="return canStart()">
         </p>
 
         {% if message %}
         <h3>{{ message }}</h3>
         {% endif %}
-
     </form>
 
-
-    <form action="/addclass" method="get">
-
-
+    <form action="/session/create" method="get">
         <p>
-            <input type="submit" value="Register Class" id="submit">
+            <input type="submit" value="Create Session" id="createsession">
         </p>
-
     </form>
 
-
-
-    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-    <script  src="{{ url_for('static', filename='js/addclass.js')}}"></script>
-
+    <form action="/logout" method="get">
+        <p>
+            <input type="submit" value="Logout" id="logout">
+        </p>
+    </form>
+    <script  src="{{ url_for('static', filename='js/createsession.js')}}"></script>
 </body>
 </html>

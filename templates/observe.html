@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>ObserveME</title>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{
+        url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+</head>
+
+<body>
+    <div id="pre_coding_form">
+            <form action="/session/timer" method="post" id="obs_form">
+                <h2>ObserveME</h2>
+                <h3>Session Code: {{ args.session_code }} </h3>
+                <h3>Student {{ args.student_id }}</h3>
+
+                <p>
+                    <label for="student_name" class="floatLabel">Student Name </label>
+                    <input id="student_name" name="student_name" value={{ args.student_id }} type="text">
+                </p>
+
+                <p>
+                    <input type="submit" value="Start" id="begin_coding">
+
+                    <input type="submit" class="sync_btn" value="Sync Multiple"
+                           id="sync"
+                           onclick="document.getElementById('obs_form').setAttribute('action','/session/sync');">
+
+                    <input type="submit" value="Skip" id="skip_student"
+                           onclick="document.getElementById('obs_form').setAttribute('method','get');
+                           document.getElementById('obs_form').setAttribute('action','/session/observe');">
+
+                </p>
+            </form>
+        </div>
+
+    <form action="/session/dashboard" method="get">
+        <p>
+            <input type="submit" value="Return" id="back">
+        </p>
+    </form>
+
+</body>
+</html>
